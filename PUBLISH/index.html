@@ -383,6 +383,7 @@
     transition:color var(--t-tap) var(--ease);
   }
   .ring-item:hover span{color:var(--accent);}
+  .ring-item .fw{text-decoration:none;}   /* <u> only to be a hook */
 
   /* ---- the thumbnail ----
      A photographer's menu shows the work. The frame grows out of the
@@ -6546,7 +6547,9 @@ if (!(window.CSS && CSS.supports && CSS.supports('animation-timeline: scroll()')
                href="#work" data-ci="${i}" role="menuitem">
       <b>${String(i + 1).padStart(2,'0')}</b>
       <em style="font-style:normal">${c.name}</em>
-      <span>${n ? n + ' frames' : 'soon'}</span>
+      <!-- the word is dropped on a phone, where the count sits in the
+           corner of a photo tile and has no room for it -->
+      <span>${n ? n + '<u class="fw">&nbsp;frames</u>' : 'soon'}</span>
       <i class="ring-thumb" data-src="${c.cover}" aria-hidden="true"></i>
     </a>`;
   }).join('');
