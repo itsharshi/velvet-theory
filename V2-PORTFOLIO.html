@@ -365,7 +365,7 @@
 
   .ring-item{
     position:relative;
-    display:grid; grid-template-columns:1.6rem 1fr auto;
+    display:grid; grid-template-columns:1.6rem 1fr auto auto;
     align-items:center; gap:.9rem;
     padding:.5rem 1.1rem .5rem .9rem;
     font-family:'JetBrains Mono',monospace;
@@ -375,9 +375,29 @@
   }
   .ring-item:hover{color:var(--fg); background:rgba(var(--wash),.06);}
   .ring-item b{font-weight:400; opacity:.4; font-size:.56rem;}
-  .ring-item span{color:var(--accent); opacity:0; font-size:.56rem;
-                  transition:opacity var(--t-tap) var(--ease);}
-  .ring-item:hover span{opacity:.85;}
+  /* The frame count is always visible now, not only on hover: it tells
+     someone whether a category is worth opening, which is the one thing
+     a menu of names cannot. Quiet until hovered, then it comes up. */
+  .ring-item span{
+    color:rgba(var(--wash),.42); font-size:.56rem;
+    transition:color var(--t-tap) var(--ease);
+  }
+  .ring-item:hover span{color:var(--accent);}
+
+  /* ---- the thumbnail ----
+     A photographer's menu shows the work. The frame grows out of the
+     right edge on hover rather than sitting there permanently, so the
+     list stays a list until you are actually choosing from it. */
+  .ring-thumb{
+    display:block; width:0; height:2.1rem;
+    background-size:cover; background-position:center;
+    filter:grayscale(1) contrast(1.05);
+    transition:width var(--t-move) var(--ease-out),
+               filter var(--t-move) var(--ease-out);
+  }
+  .ring-item:hover .ring-thumb{ width:3.2rem; filter:grayscale(0) contrast(1); }
+  /* nothing to preview in a category with no work in it */
+  .ring-item.empty .ring-thumb{ display:none; }
   /* the detent notch, on the left edge */
   .ring-item::before{
     content:''; position:absolute; left:0; top:50%;
@@ -397,7 +417,7 @@
     color:#fff;
   }
   .ring-item.wild:hover b,
-  .ring-item.wild:hover span{color:#fff; opacity:.8;}
+  .ring-item.wild:hover span{color:#fff !important; opacity:.8;}
   .ring-item.wild:hover::before{background:#fff;}
   /* an empty hidden category still answers the hover, so it reads as
      deliberate rather than broken */
@@ -6512,6 +6532,14 @@ if (!(window.CSS && CSS.supports && CSS.supports('animation-timeline: scroll()')
   const ring = document.getElementById('nav-ring');
   if (!dial || !ring) return;
 
+  /* Each row carries a thumbnail of its own cover, revealed on hover.
+     A photographer's menu should show the work rather than a coloured
+     dot or an invented icon — and it tells someone choosing a category
+     something true about what is inside it.
+
+     The image is only loaded when the ring is first opened (see below),
+     so six covers are not fetched by every visitor who never touches
+     the menu. */
   ring.innerHTML = CATS.map((c, i) => {
     const n = shotsFor(c).length;
     return `<a class="ring-item${n ? '' : ' empty'}${c.hidden ? ' wild' : ''}"
@@ -6519,8 +6547,20 @@ if (!(window.CSS && CSS.supports && CSS.supports('animation-timeline: scroll()')
       <b>${String(i + 1).padStart(2,'0')}</b>
       <em style="font-style:normal">${c.name}</em>
       <span>${n ? n + ' frames' : 'soon'}</span>
+      <i class="ring-thumb" data-src="${c.cover}" aria-hidden="true"></i>
     </a>`;
   }).join('');
+
+  /* Load the thumbnails once, the first time the menu opens. */
+  let thumbsLoaded = false;
+  function loadThumbs(){
+    if (thumbsLoaded) return;
+    thumbsLoaded = true;
+    ring.querySelectorAll('.ring-thumb').forEach(el => {
+      const src = el.dataset.src;
+      if (src) el.style.backgroundImage = `url('${src}')`;
+    });
+  }
 
   ring.querySelectorAll('.ring-item').forEach(el => {
     el.addEventListener('click', e => {
@@ -6532,7 +6572,7 @@ if (!(window.CSS && CSS.supports && CSS.supports('animation-timeline: scroll()')
 
   // a short delay on leaving, so crossing the gap does not close it
   let closeT = null;
-  const open  = () => { clearTimeout(closeT); dial.classList.add('open'); };
+  const open  = () => { clearTimeout(closeT); loadThumbs(); dial.classList.add('open'); };
   const close = () => { closeT = setTimeout(() => dial.classList.remove('open'), 180); };
   dial.addEventListener('pointerenter', open);
   dial.addEventListener('pointerleave', close);
