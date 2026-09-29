@@ -43,7 +43,10 @@
   .brand {
     display: inline-flex; align-items: center;
     min-height: 44px; font-size: .74rem;
+    gap: .4rem;
   }
+  /* smaller, and no hover to rotate it on a touch screen */
+  .brand-mark { width: 16px; height: 16px; }
   .skip { min-height: 44px; display: inline-flex; align-items: center; }
   .topright { gap: .3rem; }
   .nav-item {
