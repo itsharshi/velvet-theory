@@ -2610,9 +2610,59 @@
     font-family:'Archivo Black',sans-serif;
     font-size:clamp(1.9rem,6.5vw,4.6rem); line-height:.94; letter-spacing:-0.025em;
   }
+  /* ---- SOCIAL ----
+     Same language as the enquiry card above them: a hard offset shadow
+     and a press on contact, so the footer reads as one set of controls
+     rather than a form with some links underneath.
+
+     The label slides out from behind the icon on hover — on a phone,
+     where there is no hover, it simply shows all the time. */
+  .socials{
+    display:flex; justify-content:center; flex-wrap:wrap;
+    gap:.8rem; margin-top:2rem;
+  }
+  .socials a{
+    --edge:var(--fg);
+    display:inline-flex; align-items:center; gap:0;
+    padding:.7rem; color:var(--fg); text-decoration:none;
+    background:var(--bg);
+    border:2px solid var(--edge);
+    box-shadow:3px 3px 0 var(--edge);
+    transition:box-shadow var(--t-snap) var(--ease),
+               transform var(--t-snap) var(--ease),
+               background var(--t-snap) var(--ease),
+               color var(--t-snap) var(--ease),
+               gap var(--t-move) var(--ease-out);
+  }
+  .socials svg{
+    width:19px; height:19px; flex:none;
+    fill:currentColor; display:block;
+  }
+  /* the name is collapsed to nothing until the icon is approached */
+  .socials a span{
+    font-family:'JetBrains Mono',monospace;
+    font-size:.6rem; letter-spacing:.18em; text-transform:uppercase;
+    max-width:0; overflow:hidden; white-space:nowrap;
+    transition:max-width var(--t-move) var(--ease-out);
+  }
+  .socials a:hover{
+    background:var(--fg); color:var(--bg);
+    gap:.55rem;
+  }
+  .socials a:hover span{ max-width:7rem; }
+  .socials a:active{
+    box-shadow:0 0 0 var(--edge);
+    transform:translate(3px,3px);
+  }
+  /* a finger cannot hover, so the labels are simply always out */
+  @media (hover:none){
+    .socials a{ gap:.55rem; }
+    .socials a span{ max-width:7rem; }
+  }
+
   .foot-meta{
     display:flex; gap:1.6rem; flex-wrap:wrap; justify-content:center;
-    font-size:.62rem; opacity:.45; margin-top:1.6rem;
+    font-size:.62rem; opacity:.45; margin-top:1.4rem;
   }
 
   /* A narrower table: the cards shrink and the scatter tightens, but it
@@ -2950,18 +3000,6 @@
       </div>
     </div>
     <div class="field">
-      <label for="enq-kind">What do you need?</label>
-      <select id="enq-kind" name="kind">
-        <!-- same order as the categories on the page -->
-        <option>Portrait</option>
-        <option>Nature</option>
-        <option>Product</option>
-        <option>Landscape</option>
-        <option>Event</option>
-        <option>Something else</option>
-      </select>
-    </div>
-    <div class="field">
       <label for="enq-msg">Tell me about it</label>
       <textarea id="enq-msg" name="message" rows="4" required
         placeholder="What are the pictures for, roughly when, and where?"></textarea>
@@ -2973,9 +3011,34 @@
     <p class="enq-status mono" id="enq-status" role="status"></p>
   </form>
 
+  <!-- Social. The icons are drawn inline as SVG rather than loaded from
+       an icon font: three glyphs is not worth a network request, and
+       inline paths take the page's own colour in both themes.
+
+       TO ADD OR CHANGE A LINK: edit the href. To remove one, delete its
+       whole <a> block. To add another, copy a block and swap the path —
+       simpleicons.org has the path data for most services. -->
+  <nav class="socials" aria-label="Elsewhere">
+    <a href="https://instagram.com/varshith_2342" target="_blank" rel="noopener"
+       data-label="Instagram">
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M12 2.16c3.2 0 3.58.01 4.85.07 1.17.05 1.8.25 2.23.41.56.22.96.48 1.38.9.42.42.68.82.9 1.38.16.42.36 1.06.41 2.23.06 1.27.07 1.65.07 4.85s-.01 3.58-.07 4.85c-.05 1.17-.25 1.8-.41 2.23a3.8 3.8 0 0 1-.9 1.38c-.42.42-.82.68-1.38.9-.42.16-1.06.36-2.23.41-1.27.06-1.65.07-4.85.07s-3.58-.01-4.85-.07c-1.17-.05-1.8-.25-2.23-.41a3.8 3.8 0 0 1-1.38-.9 3.8 3.8 0 0 1-.9-1.38c-.16-.42-.36-1.06-.41-2.23-.06-1.27-.07-1.65-.07-4.85s.01-3.58.07-4.85c.05-1.17.25-1.8.41-2.23.22-.56.48-.96.9-1.38.42-.42.82-.68 1.38-.9.42-.16 1.06-.36 2.23-.41 1.27-.06 1.65-.07 4.85-.07M12 0C8.74 0 8.33.01 7.05.07 5.78.13 4.9.33 4.14.63a5.9 5.9 0 0 0-2.13 1.38A5.9 5.9 0 0 0 .63 4.14c-.3.76-.5 1.64-.56 2.91C.01 8.33 0 8.74 0 12s.01 3.67.07 4.95c.06 1.27.26 2.15.56 2.91.31.79.72 1.46 1.38 2.13a5.9 5.9 0 0 0 2.13 1.38c.76.3 1.64.5 2.91.56C8.33 23.99 8.74 24 12 24s3.67-.01 4.95-.07c1.27-.06 2.15-.26 2.91-.56a5.9 5.9 0 0 0 2.13-1.38 5.9 5.9 0 0 0 1.38-2.13c.3-.76.5-1.64.56-2.91.06-1.28.07-1.69.07-4.95s-.01-3.67-.07-4.95c-.06-1.27-.26-2.15-.56-2.91a5.9 5.9 0 0 0-1.38-2.13A5.9 5.9 0 0 0 19.86.63c-.76-.3-1.64-.5-2.91-.56C15.67.01 15.26 0 12 0z"/>
+        <path d="M12 5.84a6.16 6.16 0 1 0 0 12.32 6.16 6.16 0 0 0 0-12.32zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8z"/>
+        <circle cx="18.41" cy="5.59" r="1.44"/>
+      </svg>
+      <span>Instagram</span>
+    </a>
+
+    <a href="mailto:velvettheory1124@gmail.com" data-label="Email">
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M20 4H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2zm0 4.24-8 4.99-8-4.99V6l8 5 8-5v2.24z"/>
+      </svg>
+      <span>Email</span>
+    </a>
+  </nav>
+
   <div class="foot-meta mono">
     <span>Bengaluru</span>
-    <a href="https://instagram.com/varshith_2342" target="_blank" rel="noopener">@varshith_2342</a>
     <span>&copy; 2026</span>
   </div>
 </section>
@@ -4855,7 +4918,6 @@ if (!window.track) window.track = () => {};
 
     const name  = form.name.value.trim();
     const email = form.email.value.trim();
-    const kind  = form.kind.value;
     const msg   = form.message.value.trim();
 
     if (!name || !email || !msg) { say('Please fill in your name, email and message.', 'bad'); return; }
@@ -4863,7 +4925,7 @@ if (!window.track) window.track = () => {};
 
     // no endpoint configured yet — hand off to the visitor's mail client
     if (!FORM_ENDPOINT) {
-      const subject = `${kind} enquiry — ${name}`;
+      const subject = `Enquiry — ${name}`;
       const body = `${msg}\n\n—\n${name}\n${email}`;
       window.location.href =
         `mailto:${YOUR_EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
@@ -4882,7 +4944,7 @@ if (!window.track) window.track = () => {};
                      Formspree, which is the difference between answering
                      someone in one click and copying their address out
                      of the message body. */
-      data.set('_subject', `${kind} enquiry — ${name}`);
+      data.set('_subject', `Enquiry — ${name}`);
       data.set('_replyto', email);
       const res = await fetch(FORM_ENDPOINT, {
         method:'POST',
@@ -4891,7 +4953,7 @@ if (!window.track) window.track = () => {};
       });
       if (!res.ok) throw new Error('bad response');
       form.reset();
-      track('/enquiry/' + kind.toLowerCase(), 'Enquiry: ' + kind);
+      track('/enquiry/sent', 'Enquiry sent');
       say('Thank you — I’ll be in touch shortly.', 'good');
     } catch(err){
       say('Something went wrong. Email me directly at ' + YOUR_EMAIL, 'bad');

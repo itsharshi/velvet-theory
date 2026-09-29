@@ -324,59 +324,55 @@
   .about { padding: 3.6rem 1.1rem; }
   .about-kick { font-size: .56rem; letter-spacing: .26em; padding-top: 0; }
 
-  /* The scatter STAYS on a phone, and the cards are still draggable —
-     they just have to be picked up first. The page must keep scrolling
-     normally, so a card only takes the gesture after a short hold (the
-     JS handles that; `touch-action` is flipped on the element at the
-     moment it is claimed, not before).
+  /* THE SCATTER DOES NOT WORK ON A PHONE.
+     Seven overlapping cards on a 390px screen forced the body text down
+     to 9px — technically present, but nobody was going to read it. The
+     words matter more than the arrangement.
 
-     The table keeps a real height because the cards are absolutely
-     positioned inside it, and the positions are percentages, so the
-     whole arrangement simply reflows narrower. */
+     So the prints stand up into a single column at a size you can
+     actually read. They keep the white border, the deep foot margin and
+     the caption, so they are still recognisably the same object — just
+     laid out rather than thrown down. Dragging goes with the scatter;
+     there is nowhere to drag to in a column. */
   .about-table {
-    height: min(74vh, 560px);
-    margin-top: 1rem;
-    perspective: 1400px;
-    touch-action: pan-y;         /* the page scrolls over the table itself */
+    position: static;
+    height: auto;
+    perspective: none;
+    margin-top: 1.4rem;
+    display: flex; flex-direction: column;
+    align-items: center; gap: 1.5rem;
   }
-  .about-behind { font-size: clamp(1.2rem, 7vw, 1.9rem); }
+  .about-behind { display: none; }   /* nothing left to sit behind */
+  .about-hint   { display: none; }   /* nothing to drag */
 
-  /* Cards are much smaller here — seven of them have to share a 390px
-     screen without burying one another completely. Overlapping is the
-     point; being unreachable is not. */
   .acard {
-    width: 8.6rem;
-    padding: .5rem .5rem 1.4rem;
+    position: static;
+    width: 100%; max-width: 20rem;
+    cursor: default;
+    touch-action: auto;              /* the page must scroll over them */
+    opacity: 1 !important;           /* never wait on the deal observer */
+    padding: .85rem .85rem 2.3rem;
     box-shadow:
-      0 1px 2px rgba(0,0,0,.3),
-      0 8px 18px rgba(0,0,0,.36),
-      0 18px 40px rgba(0,0,0,.3);
+      0 1px 2px rgba(0,0,0,.26),
+      0 10px 22px rgba(0,0,0,.32),
+      0 22px 46px rgba(0,0,0,.26);
   }
-  /* The resting positions are percentages tuned for a wide table. A
-     137px card at x=68% of a 355px table hangs 24px off the right edge,
-     so the horizontal spread is squeezed toward the middle here. The
-     vertical positions are fine — the table is tall enough. */
-  .acard[data-x="8"]  { left: 2%; }
-  .acard[data-x="34"] { left: 26%; }
-  .acard[data-x="60"] { left: 50%; }
-  .acard[data-x="18"] { left: 8%; }
-  .acard[data-x="46"] { left: 34%; }
-  .acard[data-x="68"] { left: 55%; }
-  .acard[data-x="40"] { left: 30%; }
-  .acard-plate { padding: .7rem .6rem .75rem; min-height: 6.4rem; }
-  /* Italiana at a small size is still legible where a heavy sans would
-     have closed up; the serif carries the scale down better. */
-  .acard h3 { font-size: .86rem; margin-bottom: .4rem; padding-right: 1.2rem; }
-  .acard h3::after { width: 1rem; margin-top: .4rem; }
-  .acard p  { font-size: .58rem; line-height: 1.5; }
-  /* the size variation is a desktop idea — at this scale every card
-     needs all the room it can get */
-  .acard[data-x="34"], .acard[data-x="68"] { width: 8.6rem; }
-  .acard[data-x="34"] h3, .acard[data-x="68"] h3 { font-size: .86rem; }
-  .acard[data-x="34"] p { font-size: .58rem; }
-  .acard-no { font-size: .42rem; top: .55rem; right: .6rem; }
-  .acard-cap { font-size: .44rem; letter-spacing: .16em; bottom: .45rem; }
-  .acard-photo .acard-cap { font-size: .72rem; }
+  /* A slight alternating tilt, so a column of prints still reads as
+     things placed by hand rather than a list. */
+  .acard:nth-child(odd)  { transform: rotate(-1.1deg) !important; }
+  .acard:nth-child(even) { transform: rotate(1.1deg) !important; }
+
+  /* Now the type can breathe. 0.92rem body is a comfortable reading
+     size; the old 0.58rem was about nine pixels. */
+  .acard-plate { padding: 1.35rem 1.2rem 1.45rem; min-height: 0; }
+  .acard h3 { font-size: 1.5rem; margin-bottom: .75rem; padding-right: 2rem; }
+  .acard h3::after { width: 1.6rem; margin-top: .7rem; }
+  .acard p  { font-size: .92rem; line-height: 1.68; }
+  .acard-no { font-size: .56rem; top: 1rem; right: 1.05rem; }
+  .acard-cap { font-size: .58rem; letter-spacing: .2em; bottom: .8rem; }
+  .acard-photo .acard-cap { font-size: 1.15rem; }
+  /* the portrait gets the full width of its print */
+  .acard-photo .acard-img { aspect-ratio: 4/5; }
 
   /* the hint says what to do, which matters more here than on a desktop
      where a cursor already invites a drag */
@@ -437,8 +433,9 @@
   .about { padding: 3rem .95rem; }
   /* A 138px card at x=55% hangs 7px off a 290px table, which would give
      the page a horizontal scrollbar. Measured, not guessed. */
-  .acard { width: 7.9rem; }
-  .acard-plate { padding: .6rem .55rem .65rem; min-height: 5.8rem; }
-  .acard h3 { font-size: .58rem; }
-  .acard p { font-size: .55rem; line-height: 1.46; }
+  /* the cards are a full-width column now, so only the type needs
+     easing in a little at this width */
+  .acard-plate { padding: 1.15rem 1rem 1.25rem; }
+  .acard h3 { font-size: 1.34rem; }
+  .acard p { font-size: .88rem; line-height: 1.64; }
 }
