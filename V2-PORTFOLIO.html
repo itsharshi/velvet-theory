@@ -389,13 +389,13 @@
      right edge on hover rather than sitting there permanently, so the
      list stays a list until you are actually choosing from it. */
   .ring-thumb{
-    display:block; width:0; height:2.1rem;
+    display:block; width:0; height:1.5rem;
     background-size:cover; background-position:center;
     filter:grayscale(1) contrast(1.05);
     transition:width var(--t-move) var(--ease-out),
                filter var(--t-move) var(--ease-out);
   }
-  .ring-item:hover .ring-thumb{ width:3.2rem; filter:grayscale(0) contrast(1); }
+  .ring-item:hover .ring-thumb{ width:2.3rem; filter:grayscale(0) contrast(1); }
   /* nothing to preview in a category with no work in it */
   .ring-item.empty .ring-thumb{ display:none; }
   /* the detent notch, on the left edge */
