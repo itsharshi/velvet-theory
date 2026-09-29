@@ -3914,30 +3914,37 @@ function layoutFor(cat){
   cards.forEach(c => REST.set(c, { x:0, y:0 }));
 
   /* ---- PICKING A CARD UP ----
-     With a mouse, pressing down is enough.
+     The card comes with the finger THE INSTANT it is touched, in any
+     direction. No hold, no waiting to see which way the gesture is
+     going — both of those were tried and both felt slack, because the
+     card lags behind the finger while the page makes up its mind.
 
-     With a finger it cannot be, because the page also has to scroll. The
-     first version asked for a long press — the way a home screen lets
-     you rearrange icons — but it was genuinely hard to find, and holding
-     still for a third of a second is a lot to ask of someone who just
-     wants to move a card.
+     The page can still be scrolled: there is empty table around the
+     cards, and the section is taller than a screen. Scrolling from a
+     card is what is given up, and it is the right thing to give up —
+     the cards are the reason anyone is in this section.
 
-     So the gesture is read by DIRECTION instead, which is what the rest
-     of this site already does with the lightbox. Move sideways and the
-     card comes with you immediately. Move up or down and the page
-     scrolls, and the card is left alone. Nothing to hold, nothing to
-     wait for, and the page never stops scrolling.
-
-     `touch-action: pan-y` on the card tells the browser the same thing,
-     so vertical scrolling stays on the compositor and never waits on
-     JavaScript. */
-  const DIR_SLOP = 8;      // px before the direction of a gesture is clear
+     A SECOND finger releases the card immediately, so pinch-to-zoom
+     works: the browser only gets the gesture if we are not holding it,
+     and `touch-action:none` is lifted the moment a second pointer
+     arrives. */
+  const ZOOM = new Set();  // pointers currently down anywhere on the table
 
   cards.forEach(card => {
     let id = null, sx = 0, sy = 0, ox = 0, oy = 0;
     let lastX = 0, lastY = 0, lastT = 0, vx = 0, vy = 0;
     let moved = false;
     let armed = false;       // are we actually dragging this card?
+
+    /* Let go of the card without moving it — used when a second finger
+       arrives and the gesture turns out to be a pinch. */
+    function bail(){
+      if (id === null) return;
+      try { card.releasePointerCapture(id); } catch(err){}
+      id = null; armed = false; moved = false;
+      card.classList.remove('dragging');
+      card.style.touchAction = '';
+    }
 
     function claim(){
       if (armed || id === null) return;
@@ -3960,31 +3967,24 @@ function layoutFor(cat){
 
     card.addEventListener('pointerdown', e => {
       if (e.button != null && e.button !== 0) return;   // left button only
+      ZOOM.add(e.pointerId);
+
+      /* A second finger anywhere means a pinch. Drop the card at once so
+         the browser can zoom — holding on would swallow the gesture. */
+      if (ZOOM.size > 1){ bail(); return; }
+
       id = e.pointerId;
       const at = REST.get(card);
       sx = e.clientX; sy = e.clientY;
       ox = at.x; oy = at.y;
       lastX = e.clientX; lastY = e.clientY; lastT = performance.now();
       vx = vy = 0; moved = false; armed = false;
-
-      // a mouse or pen picks up at once; a finger waits to see which way
-      // it is going
-      if (e.pointerType !== 'touch') claim();
+      claim();                       // straight away, whatever the input
     });
 
     card.addEventListener('pointermove', e => {
       if (id === null || e.pointerId !== id) return;
       const dx = e.clientX - sx, dy = e.clientY - sy;
-
-      /* Not yet holding the card: decide from the DIRECTION of the first
-         real movement. Mostly sideways means they are moving the card;
-         mostly vertical means they are scrolling the page, so let go of
-         the gesture entirely. */
-      if (!armed){
-        if (Math.abs(dx) < DIR_SLOP && Math.abs(dy) < DIR_SLOP) return;
-        if (Math.abs(dy) > Math.abs(dx)) { id = null; return; }   // a scroll
-        claim();
-      }
 
       if (!moved && Math.hypot(dx, dy) > 4) moved = true;
       if (!moved) return;
@@ -4013,6 +4013,7 @@ function layoutFor(cat){
     });
 
     function release(e){
+      if (e) ZOOM.delete(e.pointerId);
       if (id === null || (e && e.pointerId !== id)) return;
       try { card.releasePointerCapture(id); } catch(err){}
       id = null;
