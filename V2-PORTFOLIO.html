@@ -4761,6 +4761,31 @@ const ANALYTICS_CODE = 'velvettheory';   // velvettheory.goatcounter.com
 (function analytics(){
   if (!ANALYTICS_CODE) return;
 
+  /* Don't count yourself.
+     Every time you open your own site to check a change, that is a visit
+     in the figures — and on a portfolio with modest traffic your own
+     visits could easily outnumber everyone else's, which would make the
+     data worse than useless.
+
+     Two exclusions:
+     · Working locally. Never real traffic.
+     · A browser you have marked, by visiting the site once with
+       ?nocount added to the address. That sets a flag which stays until
+       the browser's storage is cleared, so your phone and laptop can
+       each be excluded once and then forgotten about.
+
+     To start counting yourself again: visit with ?docount */
+  const SKIP_KEY = 'vt-no-count';
+  try {
+    if (/(\?|&)docount(=|&|$)/.test(location.search)) localStorage.removeItem(SKIP_KEY);
+    if (/(\?|&)nocount(=|&|$)/.test(location.search)) localStorage.setItem(SKIP_KEY, '1');
+    if (localStorage.getItem(SKIP_KEY) === '1') return;
+  } catch(e){ /* private mode: carry on and count */ }
+
+  const host = location.hostname;
+  if (host === 'localhost' || host === '127.0.0.1' || host === '' ||
+      location.protocol === 'file:') return;
+
   const s = document.createElement('script');
   s.async = true;
   s.dataset.goatcounter = `https://${ANALYTICS_CODE}.goatcounter.com/count`;
