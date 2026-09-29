@@ -2379,11 +2379,13 @@
      box at the top of a very tall card, because the text could not fill
      a square that was tied to the card's width. A text card is not a
      photograph; it earns its height from its content. */
+  /* Warm, not neutral. A pure blue-grey plate reads as a screenshot of a
+     terminal; a hint of brown in the shadows reads as a print. */
   .acard-plate{
     position:relative;
-    background:linear-gradient(160deg,#17171c 0%, #0e0e11 62%, #121216 100%);
-    box-shadow:inset 0 1px 0 rgba(255,255,255,.07),
-               inset 0 0 26px rgba(0,0,0,.5);
+    background:linear-gradient(158deg,#1b1917 0%, #100f0e 58%, #15130f 100%);
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.08),
+               inset 0 0 30px rgba(0,0,0,.55);
     padding:1.25rem 1.1rem 1.35rem;
     min-height:8.6rem;
     display:flex; flex-direction:column;
@@ -2449,34 +2451,52 @@
   /* Archivo Black, as the footer and the category titles use — a plain
      bold sans made these read like a settings panel rather than part of
      the site. Small and wide-tracked, so it sits as a label. */
+  /* Italiana, as the hero wordmark uses. Archivo Black at this size was
+     cramped and shouty in a 2cm box; a serif at a larger size carries
+     the same weight with room to breathe, and ties the cards to the
+     rest of the site rather than making them an island. */
   .acard h3{
     margin:0 0 .7rem;
-    font-family:'Archivo Black',sans-serif;
-    font-size:.84rem; letter-spacing:.01em; line-height:1.15;
+    font-family:'Italiana',serif;
+    font-size:1.24rem; letter-spacing:.015em; line-height:1.12;
     font-weight:400; color:#fff;
-    padding-right:2rem;              /* clear of the frame number */
+    padding-right:1.8rem;            /* clear of the frame number */
   }
-  /* a hairline under the title. White at low opacity, not the accent —
-     a saturated blue dash on a dark plate inside a white print was three
-     materials fighting in a 2cm square. */
   .acard h3::after{
     content:''; display:block; width:1.4rem; height:1px;
-    margin-top:.6rem; background:rgba(255,255,255,.3);
+    margin-top:.6rem; background:rgba(255,255,255,.28);
   }
   .acard p{
-    margin:0; font-size:.78rem; line-height:1.66;
-    color:rgba(255,255,255,.66);
+    margin:0; font-size:.76rem; line-height:1.7;
+    color:rgba(255,255,255,.7);
   }
+  /* ---- not all cards are equal ----
+     Six identical rectangles give the eye nowhere to land. The first
+     text card is larger, so the scatter has a clear starting point, and
+     the last is smaller, so the pile has some variety in it. This is
+     what a real stack of prints looks like: different sizes, not a set. */
+  .acard[data-x="34"]{ width:clamp(15rem,23vw,19rem); }
+  .acard[data-x="34"] h3{ font-size:1.42rem; }
+  .acard[data-x="34"] p{ font-size:.8rem; }
+  .acard[data-x="68"]{ width:clamp(12.5rem,18vw,15rem); }
+  .acard[data-x="68"] h3{ font-size:1.12rem; }
   .acard a{ color:#fff; text-decoration:none; white-space:nowrap;
             border-bottom:1px solid rgba(255,255,255,.4); }
   .acard a:hover{ border-bottom-color:#fff; }
 
   /* the caption in the white margin at the foot of the print */
   .acard-cap{
-    position:absolute; left:0; right:0; bottom:.75rem;
+    position:absolute; left:0; right:0; bottom:.8rem;
     text-align:center;
-    font-size:.56rem; letter-spacing:.2em; text-transform:uppercase;
+    font-size:.54rem; letter-spacing:.22em; text-transform:uppercase;
     color:#8a877f;
+  }
+  /* the frame number, repeated small in the margin — the way a contact
+     sheet is annotated under the frame rather than on it */
+  .acard-cap::before{
+    content:attr(data-n);
+    display:inline-block; margin-right:.5em;
+    opacity:.5;
   }
 
   /* the one card with a real photograph — the print the others imitate */
@@ -2841,63 +2861,65 @@
       <article class="acard" data-x="34" data-y="2"  data-tilt="4" style="--deal:90ms">
         <div class="acard-plate">
           <span class="acard-no mono">01</span>
-          <h3>The work</h3>
-          <p>Portraits, products, events, and the city itself. Six
-             collections, shot over the last couple of years.</p>
+          <h3>What I shoot</h3>
+          <p>People, products, events, and whatever Bengaluru is doing
+             that week. Seventy-odd frames here, from about two years of
+             looking.</p>
         </div>
-        <span class="acard-cap mono">The work</span>
+        <span class="acard-cap mono" data-n="01">What I shoot</span>
       </article>
 
       <article class="acard" data-x="60" data-y="8"  data-tilt="-4" style="--deal:180ms">
         <div class="acard-plate">
           <span class="acard-no mono">02</span>
-          <h3>The light</h3>
-          <p>Natural where it suits, lit where the picture needs it.
-             Better to match the light to the job than force everything
-             through one house style.</p>
+          <h3>Light, mostly</h3>
+          <p>Sometimes I wait an hour for the sun to clear a building.
+             Sometimes I bring my own. Anyone who only does one of those
+             is making the picture fit the method.</p>
         </div>
-        <span class="acard-cap mono">The light</span>
+        <span class="acard-cap mono" data-n="02">Light</span>
       </article>
 
       <article class="acard" data-x="18" data-y="30" data-tilt="7" style="--deal:270ms">
         <div class="acard-plate">
           <span class="acard-no mono">03</span>
-          <h3>The name</h3>
-          <p>The soft thing and the structured thing, held together. A
-             portrait should look like nobody was trying very hard —
-             which takes a good deal of trying.</p>
+          <h3>Why "Velvet Theory"</h3>
+          <p>Velvet is the soft thing, theory is the structured thing.
+             Good photographs need both, and pretending otherwise gets
+             you either a snapshot or a diagram.</p>
         </div>
-        <span class="acard-cap mono">The name</span>
+        <span class="acard-cap mono" data-n="03">The name</span>
       </article>
 
       <article class="acard" data-x="46" data-y="34" data-tilt="-7" style="--deal:360ms">
         <div class="acard-plate">
           <span class="acard-no mono">04</span>
-          <h3>The approach</h3>
-          <p>Fewer frames, more attention. What matters is that a picture
-             still looks like the person a year later.</p>
+          <h3>How it goes</h3>
+          <p>I'd rather take thirty frames and mean all of them than
+             three hundred and sort it out later. The test is whether
+             you still like the picture in a year.</p>
         </div>
-        <span class="acard-cap mono">The approach</span>
+        <span class="acard-cap mono" data-n="04">Method</span>
       </article>
 
       <article class="acard" data-x="68" data-y="36" data-tilt="5" style="--deal:450ms">
         <div class="acard-plate">
           <span class="acard-no mono">05</span>
-          <h3>Recognition</h3>
-          <p>Winner of several photography competitions at college in 2024,
-             held by Aroha NGO.</p>
+          <h3>Won a few</h3>
+          <p>Photography competitions at college through 2024, run by
+             Aroha NGO. Pleasant, and not the reason I do this.</p>
         </div>
-        <span class="acard-cap mono">2024</span>
+        <span class="acard-cap mono" data-n="05">2024</span>
       </article>
 
       <article class="acard" data-x="40" data-y="62" data-tilt="-3" style="--deal:540ms">
         <div class="acard-plate">
           <span class="acard-no mono">06</span>
-          <h3>Working together</h3>
-          <p>Available across India for commissions.
-             <a href="#contact">Tell me about it →</a></p>
+          <h3>Hire me</h3>
+          <p>Bengaluru mostly, anywhere in India if the work is worth the
+             train. <a href="#contact">Tell me what you need →</a></p>
         </div>
-        <span class="acard-cap mono">Commissions</span>
+        <span class="acard-cap mono" data-n="06">Commissions</span>
       </article>
     </div>
 

@@ -364,9 +364,16 @@
   .acard[data-x="68"] { left: 55%; }
   .acard[data-x="40"] { left: 30%; }
   .acard-plate { padding: .7rem .6rem .75rem; min-height: 6.4rem; }
-  .acard h3 { font-size: .62rem; margin-bottom: .45rem; padding-right: 1.3rem; }
+  /* Italiana at a small size is still legible where a heavy sans would
+     have closed up; the serif carries the scale down better. */
+  .acard h3 { font-size: .86rem; margin-bottom: .4rem; padding-right: 1.2rem; }
   .acard h3::after { width: 1rem; margin-top: .4rem; }
   .acard p  { font-size: .58rem; line-height: 1.5; }
+  /* the size variation is a desktop idea — at this scale every card
+     needs all the room it can get */
+  .acard[data-x="34"], .acard[data-x="68"] { width: 8.6rem; }
+  .acard[data-x="34"] h3, .acard[data-x="68"] h3 { font-size: .86rem; }
+  .acard[data-x="34"] p { font-size: .58rem; }
   .acard-no { font-size: .42rem; top: .55rem; right: .6rem; }
   .acard-cap { font-size: .44rem; letter-spacing: .16em; bottom: .45rem; }
   .acard-photo .acard-cap { font-size: .72rem; }
