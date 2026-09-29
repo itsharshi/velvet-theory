@@ -5,10 +5,12 @@
 # Keeping those out means the repository stays fast to clone and the
 # history stays readable.
 
-# ---- generated ----
-# PUBLISH/ is built by publish.ps1 from the files that ARE tracked, so
-# committing it would store the same photographs twice.
-PUBLISH/
+# ---- generated, but TRACKED ON PURPOSE ----
+# PUBLISH/ is built by publish.ps1 and would normally be ignored. It is
+# committed because Netlify deploys from it: publish.ps1 is PowerShell
+# and System.Drawing, which Netlify's Linux builders cannot run, so the
+# folder has to arrive already built. The cost is that the photographs
+# are stored twice, about 19MB. Worth it for a one-command deploy.
 
 # ---- the zips ----
 # Snapshots of the repository. Committing a zip of the repo INTO the repo
