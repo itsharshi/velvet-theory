@@ -53,7 +53,43 @@
     display: inline-flex; align-items: center;
     min-height: 44px; padding: 0 .5rem; font-size: .6rem;
   }
-  .nav-item i, .topnav::after, .nav-marker, .nav-ring { display: none; }
+  .nav-item i, .topnav::after, .nav-marker { display: none; }
+
+  /* ---- THE WORK MENU ON A PHONE ----
+     It was hidden entirely, which left no way to jump straight to a
+     category — the only route was scrolling past all six. It comes back
+     here as a sheet anchored under the bar rather than a hover dropdown,
+     because a finger cannot hover: the JS adds `open` on tap either way.
+
+     The thumbnails stay. They are the reason the menu is worth opening,
+     and on a phone they are ALWAYS out rather than waiting on a hover
+     that will never come. */
+  .nav-ring {
+    display: flex;
+    position: fixed;
+    top: calc(52px + env(safe-area-inset-top, 0px));
+    left: .6rem; right: .6rem;
+    max-height: calc(100svh - 52px - env(safe-area-inset-top, 0px) - 2rem);
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    padding: .35rem 0;
+  }
+  .ring-item {
+    grid-template-columns: 1.5rem 1fr auto 2.6rem;
+    gap: .7rem;
+    padding: .85rem .9rem;        /* 44px tall, the minimum touch target */
+    font-size: .68rem;
+  }
+  /* no hover on a touch screen, so the count and the frame are simply
+     there — the hover states below would otherwise never fire */
+  .ring-item span { color: rgba(var(--wash), .5); font-size: .58rem; }
+  .ring-thumb {
+    width: 2.6rem; height: 1.75rem;
+    filter: grayscale(1) contrast(1.05);
+  }
+  /* the row being pressed lights up, which is the touch equivalent */
+  .ring-item:active { background: rgba(var(--wash), .1); color: var(--fg); }
+  .ring-item:active .ring-thumb { filter: grayscale(0) contrast(1); }
   .dots { display: none; }
 
   .theme-btn {

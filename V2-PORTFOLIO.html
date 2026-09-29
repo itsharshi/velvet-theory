@@ -423,7 +423,8 @@
      deliberate rather than broken */
   .ring-item.wild.empty{opacity:.5; pointer-events:auto;}
 
-  @media (max-width:820px){ .nav-ring{display:none;} }
+  /* The ring used to be hidden below 820px. mobile.css now gives it a
+     phone layout instead — a sheet under the bar, opened by tap. */
 
   /* ============================================================
      SCROLL PROGRESS + SECTION INDEX
@@ -6574,8 +6575,28 @@ if (!(window.CSS && CSS.supports && CSS.supports('animation-timeline: scroll()')
   let closeT = null;
   const open  = () => { clearTimeout(closeT); loadThumbs(); dial.classList.add('open'); };
   const close = () => { closeT = setTimeout(() => dial.classList.remove('open'), 180); };
-  dial.addEventListener('pointerenter', open);
-  dial.addEventListener('pointerleave', close);
+
+  /* A finger cannot hover. On a touch screen the WORK link TOGGLES the
+     menu instead of following its own href — otherwise tapping it would
+     jump to the work section and the menu would never be seen.
+     A second tap, or a tap anywhere else, closes it. */
+  if (TOUCH) {
+    const workLink = dial.querySelector('.nav-item');
+    if (workLink) {
+      workLink.addEventListener('click', e => {
+        e.preventDefault();
+        if (dial.classList.contains('open')) dial.classList.remove('open');
+        else open();
+      });
+    }
+    document.addEventListener('click', e => {
+      if (!dial.contains(e.target)) dial.classList.remove('open');
+    });
+  } else {
+    dial.addEventListener('pointerenter', open);
+    dial.addEventListener('pointerleave', close);
+  }
+
   dial.addEventListener('focusin', open);
   dial.addEventListener('focusout', close);
   addEventListener('keydown', e => {
