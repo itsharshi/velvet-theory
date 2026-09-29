@@ -2963,7 +2963,7 @@
     <div class="about-table" id="about-table">
       <p class="about-behind">Six things<br>worth knowing.</p>
 
-      <article class="acard acard-photo" data-x="8"  data-y="6"  data-tilt="-6" style="--deal:0ms">
+      <article class="acard acard-photo" data-x="8"  data-y="3"  data-tilt="-5" style="--deal:0ms">
         <div class="acard-img">
           <img src="images/about-me.jpg" alt="Varshith" loading="lazy"
                onerror="this.closest('.acard').classList.add('is-empty')">
@@ -2971,7 +2971,7 @@
         <span class="acard-cap">Varshith</span>
       </article>
 
-      <article class="acard" data-x="34" data-y="2"  data-tilt="4" style="--deal:90ms">
+      <article class="acard" data-x="34" data-y="26" data-tilt="4" style="--deal:90ms">
         <div class="acard-plate">
           <span class="acard-no mono">01</span>
           <h3>What I shoot</h3>
@@ -2982,7 +2982,7 @@
         <span class="acard-cap mono" data-n="01">What I shoot</span>
       </article>
 
-      <article class="acard" data-x="60" data-y="8"  data-tilt="-4" style="--deal:180ms">
+      <article class="acard" data-x="60" data-y="50" data-tilt="-4" style="--deal:180ms">
         <div class="acard-plate">
           <span class="acard-no mono">02</span>
           <h3>Light, mostly</h3>
@@ -2993,7 +2993,7 @@
         <span class="acard-cap mono" data-n="02">Light</span>
       </article>
 
-      <article class="acard" data-x="18" data-y="30" data-tilt="7" style="--deal:270ms">
+      <article class="acard" data-x="18" data-y="72" data-tilt="6" style="--deal:270ms">
         <div class="acard-plate">
           <span class="acard-no mono">03</span>
           <h3>Why "Velvet Theory"</h3>
@@ -3004,7 +3004,7 @@
         <span class="acard-cap mono" data-n="03">The name</span>
       </article>
 
-      <article class="acard" data-x="46" data-y="34" data-tilt="-7" style="--deal:360ms">
+      <article class="acard" data-x="46" data-y="14" data-tilt="-6" style="--deal:360ms">
         <div class="acard-plate">
           <span class="acard-no mono">04</span>
           <h3>How it goes</h3>
@@ -3015,7 +3015,7 @@
         <span class="acard-cap mono" data-n="04">Method</span>
       </article>
 
-      <article class="acard" data-x="68" data-y="36" data-tilt="5" style="--deal:450ms">
+      <article class="acard" data-x="68" data-y="38" data-tilt="5" style="--deal:450ms">
         <div class="acard-plate">
           <span class="acard-no mono">05</span>
           <h3>Won a few</h3>
@@ -3025,7 +3025,7 @@
         <span class="acard-cap mono" data-n="05">2024</span>
       </article>
 
-      <article class="acard" data-x="40" data-y="62" data-tilt="-3" style="--deal:540ms">
+      <article class="acard" data-x="40" data-y="61" data-tilt="-3" style="--deal:540ms">
         <div class="acard-plate">
           <span class="acard-no mono">06</span>
           <h3>Commissions</h3>
@@ -3864,7 +3864,7 @@ function layoutFor(cat){
      swiping and getting a scroll. */
   if (hint && matchMedia('(hover: none)').matches){
     const label = hint.querySelector('b');
-    if (label) label.textContent = 'Hold a card to move it';
+    if (label) label.textContent = 'Slide a card sideways';
   }
 
   /* Deal them in when the section arrives. Once only — a scatter that
@@ -3913,26 +3913,30 @@ function layoutFor(cat){
   cards.forEach(c => REST.set(c, { x:0, y:0 }));
 
   /* ---- PICKING A CARD UP ----
-     With a mouse, pressing down is enough. With a finger it cannot be:
-     a card that grabs the first touch would swallow the scroll, and
-     seven stacked cards would make most of this section a dead zone
-     where swiping does nothing.
+     With a mouse, pressing down is enough.
 
-     So on touch the card must be CLAIMED first — held for a moment,
-     the way a phone's home screen lets you rearrange icons. A quick
-     swipe scrolls straight past; a deliberate press picks the card up.
-     `touch-action` is flipped on the element only once that happens,
-     so the browser keeps handling the gesture as a scroll until the
-     moment we actually take it. */
-  const HOLD_MS = 350;     // long enough not to fire on a scroll flick
-  const HOLD_SLOP = 10;    // moving further than this first = a scroll
+     With a finger it cannot be, because the page also has to scroll. The
+     first version asked for a long press — the way a home screen lets
+     you rearrange icons — but it was genuinely hard to find, and holding
+     still for a third of a second is a lot to ask of someone who just
+     wants to move a card.
+
+     So the gesture is read by DIRECTION instead, which is what the rest
+     of this site already does with the lightbox. Move sideways and the
+     card comes with you immediately. Move up or down and the page
+     scrolls, and the card is left alone. Nothing to hold, nothing to
+     wait for, and the page never stops scrolling.
+
+     `touch-action: pan-y` on the card tells the browser the same thing,
+     so vertical scrolling stays on the compositor and never waits on
+     JavaScript. */
+  const DIR_SLOP = 8;      // px before the direction of a gesture is clear
 
   cards.forEach(card => {
     let id = null, sx = 0, sy = 0, ox = 0, oy = 0;
     let lastX = 0, lastY = 0, lastT = 0, vx = 0, vy = 0;
     let moved = false;
     let armed = false;       // are we actually dragging this card?
-    let holdTimer = null;
 
     function claim(){
       if (armed || id === null) return;
@@ -3941,12 +3945,12 @@ function layoutFor(cat){
       card.classList.add('dragging');
       card.style.zIndex = ++z;
       /* take the gesture from the browser only NOW — before this, a
-         swipe must still scroll the page */
+         vertical swipe must still scroll the page */
       card.style.touchAction = 'none';
       try { card.setPointerCapture(id); } catch(err){}
-      /* a short buzz, where the phone supports it: the same feedback
-         a home screen gives when an icon comes loose */
-      if (navigator.vibrate) { try { navigator.vibrate(12); } catch(err){} }
+      /* a short buzz, where the phone supports it, so it is obvious the
+         card has come loose */
+      if (navigator.vibrate) { try { navigator.vibrate(8); } catch(err){} }
       table.classList.add('touched');
       clearTimeout(nudgeTimer);
       card.classList.remove('nudge');
@@ -3962,27 +3966,23 @@ function layoutFor(cat){
       lastX = e.clientX; lastY = e.clientY; lastT = performance.now();
       vx = vy = 0; moved = false; armed = false;
 
-      if (e.pointerType === 'touch'){
-        // a finger has to hold it first
-        clearTimeout(holdTimer);
-        holdTimer = setTimeout(claim, HOLD_MS);
-      } else {
-        claim();                      // a mouse or pen picks up at once
-      }
+      // a mouse or pen picks up at once; a finger waits to see which way
+      // it is going
+      if (e.pointerType !== 'touch') claim();
     });
 
     card.addEventListener('pointermove', e => {
       if (id === null || e.pointerId !== id) return;
       const dx = e.clientX - sx, dy = e.clientY - sy;
 
-      /* Moving before the hold completes means they were scrolling, not
-         reaching for the card. Let the page have the gesture. */
+      /* Not yet holding the card: decide from the DIRECTION of the first
+         real movement. Mostly sideways means they are moving the card;
+         mostly vertical means they are scrolling the page, so let go of
+         the gesture entirely. */
       if (!armed){
-        if (Math.hypot(dx, dy) > HOLD_SLOP){
-          clearTimeout(holdTimer);
-          id = null;                  // give up on this gesture entirely
-        }
-        return;
+        if (Math.abs(dx) < DIR_SLOP && Math.abs(dy) < DIR_SLOP) return;
+        if (Math.abs(dy) > Math.abs(dx)) { id = null; return; }   // a scroll
+        claim();
       }
 
       if (!moved && Math.hypot(dx, dy) > 4) moved = true;
@@ -4012,7 +4012,6 @@ function layoutFor(cat){
     });
 
     function release(e){
-      clearTimeout(holdTimer);               // a tap that never became a hold
       if (id === null || (e && e.pointerId !== id)) return;
       try { card.releasePointerCapture(id); } catch(err){}
       id = null;
