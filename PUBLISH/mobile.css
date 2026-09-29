@@ -468,9 +468,36 @@
   .acard-photo .acard-cap { font-size: .85rem; }
   .acard-photo .acard-img { aspect-ratio: 4/5; }
 
-  /* the hint says what to do, which matters more here than on a desktop
-     where a cursor already invites a drag */
-  .about-hint { font-size: .5rem; letter-spacing: .2em; }
+  /* ---- THE HINT GOES TO THE TOP ----
+     It sits after the table in the source, which puts it below a
+     1020px-tall scatter — so on a phone you only meet the instruction
+     after you have already scrolled past everything it was meant to
+     explain. Flex ordering lifts it to the empty space beside WHO,
+     where it is the first thing read.
+
+     The markup is untouched: a screen reader and the desktop layout
+     both still get the original order. */
+  .about-inner {
+    display: flex;
+    flex-direction: column;
+  }
+  .about-kick  { order: 1; }
+  .about-hint  { order: 2; }
+  .about-table { order: 3; }
+
+  /* The desktop version starts at opacity 0 and only appears once the
+     cards have dealt in, 1.5s later — sensible when it sits under the
+     scatter, wrong when it is the first thing above it. Here it is
+     simply present, and still disappears once a card has been moved. */
+  .about-hint,
+  .about-table.dealt ~ .about-hint {
+    font-size: .52rem; letter-spacing: .2em;
+    text-align: left;
+    margin: .5rem 0 0;
+    opacity: .42;
+    transition-delay: 0s;
+  }
+  .about-hint.gone { opacity: 0 !important; }
 
   /* ----------------------------------------------------------------
      06 · THE FOOTER
