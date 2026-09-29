@@ -370,7 +370,7 @@
   .acard-plate { padding: 1.35rem 1.2rem 1.45rem; min-height: 0; }
   .acard h3 { font-size: 1.5rem; margin-bottom: .75rem; padding-right: 2rem; }
   .acard h3::after { width: 1.6rem; margin-top: .7rem; }
-  .acard p  { font-size: .92rem; line-height: 1.68; }
+  .acard p  { font-size: .95rem; line-height: 1.64; }
   .acard-no { font-size: .56rem; top: 1rem; right: 1.05rem; }
   .acard-cap { font-size: .58rem; letter-spacing: .2em; bottom: .8rem; }
   .acard-photo .acard-cap { font-size: 1.15rem; }

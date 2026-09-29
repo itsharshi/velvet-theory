@@ -2482,9 +2482,15 @@
     content:''; display:block; width:1.4rem; height:1px;
     margin-top:.6rem; background:rgba(255,255,255,.28);
   }
+  /* This was .76rem at 70% white — about 12px. Checked against WCAG and
+     the CONTRAST was already fine (9:1, comfortably AAA); the problem
+     was simply SIZE, made worse by the cards being tilted. So the fix is
+     mostly larger type, with a little more brightness for reading on a
+     phone outdoors. */
   .acard p{
-    margin:0; font-size:.76rem; line-height:1.7;
-    color:rgba(255,255,255,.7);
+    margin:0; font-size:.88rem; line-height:1.62;
+    color:rgba(255,255,255,.88);
+    letter-spacing:.004em;        /* a touch of air at small sizes */
   }
   /* ---- not all cards are equal ----
      Six identical rectangles give the eye nowhere to land. The first
@@ -2685,9 +2691,11 @@
      is still a scatter. Below 820 mobile.css stacks them instead. */
   @media (max-width:1080px){
     .about-table{ height:min(84vh,780px); }
-    .acard{ width:clamp(12.5rem,24vw,15rem); padding:1.25rem 1.15rem 1.35rem; }
+    /* wider than before: the larger body text needs the measure, or a
+       card becomes nine lines of four words */
+    .acard{ width:clamp(14rem,27vw,16.5rem); padding:1.25rem 1.15rem 1.35rem; }
     .acard h3{ font-size:.98rem; }
-    .acard p{ font-size:.78rem; }
+    .acard p{ font-size:.86rem; line-height:1.6; }
   }
 
   /* ============================================================
