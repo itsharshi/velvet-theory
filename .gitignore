@@ -1,0 +1,53 @@
+# What NOT to put on GitHub.
+#
+# The site itself is small — two files and about 79 photographs. The rest
+# of this folder is 400MB of camera originals, old experiments and drafts.
+# Keeping those out means the repository stays fast to clone and the
+# history stays readable.
+
+# ---- generated ----
+# PUBLISH/ is built by publish.ps1 from the files that ARE tracked, so
+# committing it would store the same photographs twice.
+PUBLISH/
+
+# ---- the zips ----
+# Snapshots of the repository. Committing a zip of the repo INTO the repo
+# doubles its size every time.
+*.zip
+
+# ---- camera originals and staging folders ----
+# The working `images/` folder is tracked; these are the unedited sources
+# and holding areas it was built from.
+NEW IMAGES/
+photos for website/
+cover photos/
+random stuff/
+traditional potraits/
+textures/
+3D GENERATION/
+CAM EXPERIMENT/
+
+# ---- old versions and experiments ----
+# Kept on disk, but they are not the site and clutter the history.
+V1-*.html
+V2-BEFORE-3D.html
+NOIR-BLANC-*.html
+*-SAMPLE.html
+*-STUDY.html
+*-CUSTOM.html
+BOXES-*.html
+HERO-*.html
+COVER-TITLE.html
+GRID-*.html
+SCROLL-SAMPLE.html
+TYPE-STUDY.html
+MOBILE-SAMPLE.html
+PARKED-*.txt
+*.bak
+
+# ---- editor and OS noise ----
+.claude/
+.vscode/
+Thumbs.db
+desktop.ini
+*.tmp
