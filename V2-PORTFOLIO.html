@@ -4760,7 +4760,7 @@ document.getElementById('cv-file').addEventListener('change', function(){
    endpoint below and enquiries arrive in your inbox. Left blank, the
    form still works — it opens the visitor's mail app instead.
    ================================================================ */
-const FORM_ENDPOINT = '';                    // <-- e.g. 'https://formspree.io/f/xxxxxxxx'
+const FORM_ENDPOINT = 'https://formspree.io/f/xyezopwb';
 const YOUR_EMAIL    = 'velvettheory1124@gmail.com';
 
 /* ================================================================
@@ -4874,10 +4874,20 @@ if (!window.track) window.track = () => {};
     send.disabled = true;
     say('Sending…');
     try {
+      const data = new FormData(form);
+      /* Two fields Formspree treats specially:
+         _subject  — what the email's subject line says, so an enquiry is
+                     identifiable in the inbox without opening it.
+         _replyto  — makes Reply go to the ENQUIRER rather than to
+                     Formspree, which is the difference between answering
+                     someone in one click and copying their address out
+                     of the message body. */
+      data.set('_subject', `${kind} enquiry — ${name}`);
+      data.set('_replyto', email);
       const res = await fetch(FORM_ENDPOINT, {
         method:'POST',
         headers:{ 'Accept':'application/json' },
-        body: new FormData(form)
+        body: data
       });
       if (!res.ok) throw new Error('bad response');
       form.reset();
