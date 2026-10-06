@@ -275,7 +275,7 @@
   }
   .pcol { gap: .55rem; }
   .plate { width: 100% !important; background: none; box-shadow: none; }
-  .plate img { transform: none !important; }
+  .plate .pimg { transform: none !important; }
   /* no caption on the grid: the photographs are the page */
   .plate figcaption { display: none !important; }
   .plate-scale, .plate-size { display: none; }
@@ -498,7 +498,7 @@
    ------------------------------------------------------------------ */
 @media (hover: none) {
   .plate:hover { transform: none; box-shadow: none; background: none; }
-  .plate:hover img { transform: none; }
+  .plate:hover .pimg { transform: none; }
   .cat:hover .cat-media img { filter: grayscale(1) brightness(.78); }
   .lb-frame:hover .lb-plate { opacity: 1; }
 }

@@ -6,7 +6,8 @@
 # weigh a fraction of that with no visible loss on a screen.
 Add-Type -AssemblyName System.Drawing
 
-$root = "C:\Users\Sai veekshith\OneDrive\Desktop\CLOUDE"
+# the folder this script lives in, wherever that is on this machine
+$root = Split-Path -Parent $MyInvocation.MyCommand.Path
 $src  = Join-Path $root "V2-PORTFOLIO.html"
 $out  = Join-Path $root "PUBLISH"
 $outImg = Join-Path $out "images"
@@ -20,8 +21,10 @@ $refs = New-Object System.Collections.Generic.HashSet[string]
 foreach($m in [regex]::Matches($html, "images/([A-Za-z0-9_\-\.]+\.(?:jpg|jpeg|png))")){
   [void]$refs.Add($m.Groups[1].Value)
 }
-# the CATS arrays name files without the images/ prefix or extension
-foreach($m in [regex]::Matches($html, "\['([a-z0-9\-]+)','[pslx]'")){
+# the CATS arrays name files without the images/ prefix or extension, and so
+# does BASE_CONTENT.added (written by the editor's export: double quotes,
+# often spread over several lines)
+foreach($m in [regex]::Matches($html, "\[\s*['""]([a-z0-9\-]+)['""]\s*,\s*['""][pslx]['""]")){
   [void]$refs.Add($m.Groups[1].Value + ".jpg")
 }
 Write-Output "page references $($refs.Count) photographs"
